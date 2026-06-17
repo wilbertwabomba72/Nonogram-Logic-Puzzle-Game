@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nonogram: Logic Puzzle Game</title>
+  <meta name="description" content="Nonogram: Logic Puzzle Game is a relaxing number puzzle experience with clean blue-and-white visuals, offline play, handcrafted progression, and satisfying brain-teasing boards.">
+  <meta name="keywords" content="nonogram, picross, griddlers, logic puzzle, number puzzle, brain teaser, offline puzzle game, relaxing puzzle, mobile puzzle game">
+  <style>
+    :root {
+      --bg-top: #dff0ff;
+      --bg-bottom: #f8fbff;
+      --card: rgba(255, 255, 255, 0.88);
+      --line: rgba(41, 127, 220, 0.18);
+      --primary: #2477df;
+      --primary-deep: #1b56b6;
+      --text: #17375f;
+      --muted: #55779f;
+      --shadow: 0 18px 48px rgba(46, 113, 201, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(95, 176, 255, 0.28), transparent 32%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--primary-deep);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 28px 0 8px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(60, 117, 196, 0.12);
+    }
+
+    .brand {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-deep);
+      letter-spacing: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: center;
+      padding: 34px 0 24px;
+    }
+
+    .hero-copy h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: 0.98;
+      color: var(--primary-deep);
+    }
+
+    .hero-copy p {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    .hero-points {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 22px;
+    }
+
+    .chip {
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(36, 119, 223, 0.12);
+      color: var(--primary-deep);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #52b3ff, #2a8aef);
+      color: white;
+      box-shadow: 0 14px 30px rgba(49, 133, 229, 0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: rgba(36, 119, 223, 0.16);
+      color: var(--primary-deep);
+    }
+
+    .hero-shot {
+      background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.7));
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .hero-shot img {
+      display: block;
+      width: 100%;
+      border-radius: 22px;
+    }
+
+    section {
+      padding: 26px 0;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.82);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      color: var(--primary-deep);
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 18px;
+      background: rgba(255,255,255,0.74);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 1.03rem;
+      color: var(--primary-deep);
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .list-card {
+      padding: 20px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .list-card h3 {
+      margin: 0 0 10px;
+      color: var(--primary-deep);
+    }
+
+    .list-card ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .shot {
+      background: rgba(255,255,255,0.74);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 12px;
+    }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 10px 22px rgba(39, 101, 183, 0.12);
+    }
+
+    .shot span {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .meta-box {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.76);
+    }
+
+    .meta-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--primary-deep);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .meta-box span {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 20px 0 40px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .feature-grid,
+      .two-col,
+      .gallery,
+      .meta {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="nav">
+      <div class="brand">Nonogram: Logic Puzzle Game</div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#how-to-play">How to Play</a>
+        <a href="privacy.html">Privacy</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Relaxing Number Puzzles, One Clean Grid at a Time</h1>
+        <p>
+          Nonogram: Logic Puzzle Game is a polished offline puzzle experience where numbers guide every move.
+          Fill the right cells, mark empty spaces, and reveal hidden pixel-style shapes through pure deduction.
+        </p>
+        <p>
+          Built for short sessions and satisfying clears, the game combines calm presentation, intuitive controls,
+          and progressively tougher puzzle boards that reward focus instead of speed.
+        </p>
+        <div class="hero-points">
+          <span class="chip">Offline Play</span>
+          <span class="chip">Logic-Based Progression</span>
+          <span class="chip">Clean Blue Puzzle Theme</span>
+          <span class="chip">Mobile-Friendly Controls</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#screenshots">View Screenshots</a>
+          <a class="btn btn-secondary" href="privacy.html">Read Privacy Policy</a>
+        </div>
+      </div>
+      <div class="hero-shot">
+        <img src="web-assets/iphone-03.jpg" alt="Nonogram gameplay screenshot on iPhone">
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Why Players Will Enjoy It</h2>
+          <p>A focused puzzle experience with a soft presentation and a steady sense of progression.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <h3>Classic Nonogram Rules</h3>
+            <p>Use row and column clues to decide which cells should be filled and which must stay empty.</p>
+          </article>
+          <article class="feature">
+            <h3>Progressive Challenge</h3>
+            <p>Early boards teach the rhythm of the game, then later levels demand sharper planning and cleaner logic.</p>
+          </article>
+          <article class="feature">
+            <h3>Comfortable Controls</h3>
+            <p>Switch between brush, X mark, erase, undo, hint, and reset with a clear toolbar built for touch.</p>
+          </article>
+          <article class="feature">
+            <h3>Calm Visual Style</h3>
+            <p>Bright blue-and-white boards, soft highlights, and simple readable UI keep the puzzle front and center.</p>
+          </article>
+          <article class="feature">
+            <h3>Works Offline</h3>
+            <p>The core game is playable without an internet connection, making it easy to enjoy anywhere.</p>
+          </article>
+          <article class="feature">
+            <h3>Short Session Friendly</h3>
+            <p>Boards are easy to pick up in spare moments while still feeling rewarding when completed in one run.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-to-play">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>How to Play</h2>
+          <p>Simple to learn, satisfying to master.</p>
+        </div>
+        <div class="two-col">
+          <div class="list-card">
+            <h3>Basic Rules</h3>
+            <ul>
+              <li>Each number tells you how many filled cells appear together in that row or column.</li>
+              <li>Multiple numbers mean separate groups, with at least one empty space between them.</li>
+              <li>Use the brush to fill correct cells.</li>
+              <li>Use the X tool to mark cells that should stay empty.</li>
+              <li>Finish the full pattern to clear the level.</li>
+            </ul>
+          </div>
+          <div class="list-card">
+            <h3>Useful Tools</h3>
+            <ul>
+              <li><strong>Brush</strong>: fill cells you believe are correct.</li>
+              <li><strong>X</strong>: mark impossible cells.</li>
+              <li><strong>Erase</strong>: remove a mistake.</li>
+              <li><strong>Undo</strong>: step back quickly.</li>
+              <li><strong>Hint</strong>: reveal a helpful move when needed.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenshots">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Gameplay Screenshots</h2>
+          <p>Compressed screenshots are used here for faster page loading while preserving the actual in-game look.</p>
+        </div>
+        <div class="gallery">
+          <figure class="shot">
+            <img src="web-assets/iphone-01.jpg" alt="Nonogram gameplay screenshot showing a partially solved puzzle">
+            <span>In-progress puzzle solving on iPhone</span>
+          </figure>
+          <figure class="shot">
+            <img src="web-assets/iphone-02.jpg" alt="Nonogram gameplay screenshot with a larger logic pattern">
+            <span>Number clues and grid deduction in action</span>
+          </figure>
+          <figure class="shot">
+            <img src="web-assets/iphone-03.jpg" alt="Nonogram gameplay screenshot showing puzzle tools and board layout">
+            <span>Clean toolbar controls for fast puzzle play</span>
+          </figure>
+          <figure class="shot">
+            <img src="web-assets/ipad-01.jpg" alt="Nonogram gameplay screenshot on iPad with a large puzzle layout">
+            <span>Larger board presentation on iPad</span>
+          </figure>
+          <figure class="shot">
+            <img src="web-assets/ipad-03.jpg" alt="Nonogram gameplay screenshot on iPad showing advanced level progression">
+            <span>Advanced clue combinations on bigger screens</span>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Game Overview</h2>
+          <p>A quick summary for players, reviewers, and store listing support pages.</p>
+        </div>
+        <div class="meta">
+          <div class="meta-box">
+            <strong>Genre</strong>
+            <span>Logic Puzzle / Nonogram</span>
+          </div>
+          <div class="meta-box">
+            <strong>Play Style</strong>
+            <span>Offline, Single Player</span>
+          </div>
+          <div class="meta-box">
+            <strong>Keywords</strong>
+            <span>Picross, Griddlers, Brain Teaser</span>
+          </div>
+          <div class="meta-box">
+            <strong>Contact</strong>
+            <span>508923216@qq.com</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <div>
+      Contact: <a href="mailto:508923216@qq.com">508923216@qq.com</a><br>
+      Privacy Policy: <a href="privacy.html">privacy.html</a>
+    </div>
+  </footer>
+</body>
+</html>
